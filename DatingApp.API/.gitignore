@@ -4,5 +4,8 @@ obj
 *.db
 *.vs
 **/.vscode
+../*.vs
+../**/.v7scode
+
 
 
