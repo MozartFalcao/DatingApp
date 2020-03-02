@@ -1,0 +1,36 @@
+Creating a project solution and the structure of the project on VsCode
+
+1 --> Create the solution 
+>>> dotnet new sln
+
+2 --> Create the Persistence Project 
+>>> dotnet new classlib -n Persistence
+
+3 --> Create the Application Project 
+>>> dotnet new classlib -n Application
+
+4 --> Create the Domain Project 
+>>> dotnet new classlib -n Domain
+
+5 --> Create the WebAPI Project 
+>>> dotnet new webapi -n API
+
+
+6 --> Adicionar os Projectos à solution 
+>>> dotnet sln add path of project.
+
+7 --> adicionar as referencias entre os projetos 
+>> ..\Application> dotnet add reference ..\Domain\ 
+>> ..\Application> dotnet add reference ..\Persistence\
+>> ..\API> dotnet add reference ..\Application\
+>> ..\Persistence> dotnet add reference ..\Domain\
+
+8 --> When the classes are finaly setted just migrate the data base command. 
+>> dotnet ef migration add initialCreate -p Persistence/ -s API/
+
+
+9 --> Seeding data on the data base
+>> dotnet-ef migrations add SeedValues -p .\Persistence\ - .\API\    
+
+10 --> adiconando uma nova classe e atualizando o entity framework --> modulo 2 secutiry API
+>> dotnet ef migrations add AddedUserEntity

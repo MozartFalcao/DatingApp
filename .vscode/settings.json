@@ -1,0 +1,13 @@
+{
+    "sqltools.connections": [
+        {
+            "database": "DatingApp",
+            "dialect": "PostgreSQL",
+            "name": "Postgres 12",
+            "password": "123456",
+            "port": 5432,
+            "server": "localhost",
+            "username": "mozart.falcao"
+        }
+    ]
+}
