@@ -1,8 +1,15 @@
+using System;
+using System.Text;
+using System.Security.Claims;
 using System.Reflection.Metadata;
 using System.Threading.Tasks;
 using DatingApp.API.Data;
+using DatingApp.API.Dtos;
 using DatingApp.API.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
+using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
 
 namespace DatingApp.API.Controllers
 {
@@ -11,33 +18,71 @@ namespace DatingApp.API.Controllers
     public class AuthController : ControllerBase
     {
         public IAuthRepository _repo { get; }
-        public AuthController(IAuthRepository repo)
+        public IConfiguration _config { get; }
+        public AuthController(IAuthRepository repo, IConfiguration config)
         {
+            _config = config;
             _repo = repo;
 
         }
 
         [HttpPost("register")]
-        public async Task<IActionResult> Register(string username, string password)
-        {   
+        public async Task<IActionResult> Register(UserForRegisterDto userForRegisterDto)
+        {
             // TODO: Validate request
 
-            username = username.ToLower();
+            userForRegisterDto.Username = userForRegisterDto.Username.ToLower();
 
-            if (await _repo.UserExists(username))
+            if (await _repo.UserExists(userForRegisterDto.Username))
                 return BadRequest("Username alredy exists");
 
             var userToCreate = new User
             {
-                Username = username
+                Username = userForRegisterDto.Username
             };
-            
-            var createdUser = await _repo.Register(userToCreate, password);
+
+            var createdUser = await _repo.Register(userToCreate, userForRegisterDto.Password);
+
 
             return StatusCode(201);
 
         }
 
+        [HttpPost("login")]
+        public async Task<IActionResult> Login(UserForRegisterDto userForRegisterDto)
+        {
+            var userFromRepo = await _repo.Login(userForRegisterDto.Username.ToLower(), userForRegisterDto.Password);
+
+            if (userFromRepo == null)
+                return Unauthorized();
+
+            var claims = new[]
+            {
+                new Claim(ClaimTypes.NameIdentifier, userFromRepo.Id.ToString()),
+                new Claim(ClaimTypes.Name, userFromRepo.Username)
+
+            };
+
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config.GetSection("AppSettings:Token").Value));
+
+            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
+            
+            var tokenDescriptor = new SecurityTokenDescriptor
+            {
+                Subject = new ClaimsIdentity(claims),
+                Expires = DateTime.Now.AddDays(1),
+                SigningCredentials = creds
+            };
+
+            var tokenHandler = new JwtSecurityTokenHandler();
+
+            var token = tokenHandler.CreateToken(tokenDescriptor);
+
+            return Ok(new {
+                token = tokenHandler.WriteToken(token)
+            });
+            
+        }
 
 
     }

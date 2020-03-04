@@ -5,7 +5,7 @@ obj
 *.vs
 **/.vscode
 ../*.vs
-../**/.v7scode
+../**/.vscode
 
 
 
