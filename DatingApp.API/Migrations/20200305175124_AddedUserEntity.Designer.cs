@@ -10,7 +10,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace DatingApp.API.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20200227212830_AddedUserEntity")]
+    [Migration("20200305175124_AddedUserEntity")]
     partial class AddedUserEntity
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
