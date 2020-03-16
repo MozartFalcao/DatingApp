@@ -58,7 +58,7 @@ namespace DatingApp.API
 
             }
 
-            app.UseHttpsRedirection();
+            //app.UseHttpsRedirection();
 
             app.UseRouting();
 
