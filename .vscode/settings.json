@@ -9,5 +9,9 @@
             "server": "localhost",
             "username": "mozart.falcao"
         }
-    ]
+    ],
+    "files.exclude": {
+        ".vs": true,
+        ".vscode": true
+    }
 }
